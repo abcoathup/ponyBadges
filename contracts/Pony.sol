@@ -12,30 +12,26 @@ contract Pony {
   TOKEN public flexbuxx;
   address public admin;
 
-  struct pony {
-    uint8 body;
-    uint8 mane;
-    uint8 ponyType;
-  }
+  uint256 private _totalSupply;
 
-  mapping(address => pony) private _ponies;
+  mapping(address => uint256) private _ponies;
 
-  event NewPony(address friend, uint8 body, uint8 mane, uint8 ponyType);
+  event NewPony(address friend, uint256 ponyId);
     
   function Pony (address _fb) public {
     flexbuxx = TOKEN(_fb);
     admin = msg.sender;
+    _totalSupply = 0;
   }
 
   function tokenFallback (address from, uint256 value, bytes _dc) public {
     require(value >= PLAY_COST);
     require(msg.sender == address(flexbuxx));
 
-    _ponies[from].body = 1;
-    _ponies[from].mane = 2;
-    _ponies[from].ponyType = 3;
+    _totalSupply++;
+    _ponies[from] = _totalSupply;
 
-    emit NewPony(from, _ponies[from].body, _ponies[from].mane, _ponies[from].ponyType);
+    emit NewPony(from, _ponies[from]);
   }
 
   function withdraw () public {
@@ -44,11 +40,7 @@ contract Pony {
     require(flexbuxx.transfer(admin, flexbuxx.balanceOf(address(this)), empty));
   }
 
-  function getPony() public view returns (uint8 body, uint8 mane, uint8 ponyType) {
-    return (_ponies[msg.sender].body, _ponies[msg.sender].mane, _ponies[msg.sender].ponyType);
-  }
-
-  function _random(uint8 max) private view returns (uint8) {
-    return uint8(uint256(keccak256(block.timestamp, block.difficulty))%max);
+  function getPony(address friend) public view returns (uint256 ponyId) {
+    return (_ponies[friend]);
   }
 }
