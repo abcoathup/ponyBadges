@@ -29,14 +29,19 @@ contract('Pony', function([admin, anotherAccount, yetAnotherAccount, buxxAccount
       assert.equal(_balance, ponyPlay);
       var _ponyId = await pony.getPony(anotherAccount);
       _ponyId.should.be.bignumber.equal(new BN(1));
+      var _totalSupply = await pony.totalSupply();
+      _totalSupply.should.be.bignumber.equal(new BN(1));
     })
 
     it('multiple ponies', async function() {
       var _ponyId;
+      var _totalSupply;
       for (var i=0; i < ponyCount; i++) {
         await buxx.methods['transfer(address,uint256,bytes)'](pony.address, ponyPlay, "0x", {from: anotherAccount} )
         _ponyId = await pony.getPony(anotherAccount);
         _ponyId.should.be.bignumber.equal(new BN(i + 1));
+        _totalSupply = await pony.totalSupply();
+        _totalSupply.should.be.bignumber.equal(new BN(i + 1));
       }
     });
 

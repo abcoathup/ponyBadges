@@ -12,7 +12,7 @@ contract Pony {
   TOKEN public flexbuxx;
   address public admin;
 
-  uint256 private _totalSupply;
+  uint256 public totalSupply;
 
   mapping(address => uint256) private _ponies;
 
@@ -21,15 +21,15 @@ contract Pony {
   function Pony (address _fb) public {
     flexbuxx = TOKEN(_fb);
     admin = msg.sender;
-    _totalSupply = 0;
+    totalSupply = 0;
   }
 
   function tokenFallback (address from, uint256 value, bytes _dc) public {
     require(value >= PLAY_COST);
     require(msg.sender == address(flexbuxx));
 
-    _totalSupply++;
-    _ponies[from] = _totalSupply;
+    totalSupply++;
+    _ponies[from] = totalSupply;
 
     emit NewPony(from, _ponies[from]);
   }
